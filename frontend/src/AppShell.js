@@ -6,6 +6,8 @@ export class AppShell extends LitElement {
   static get properties() {
     return {
       title: { type: String },
+      response: { type: Object },
+      responseBody: { type: String }
     };
   }
 
@@ -74,8 +76,11 @@ export class AppShell extends LitElement {
         >
           Code examples
         </a>
-      </main>
 
+        <div><button @click=${this.ping}>Send PING to backend</button></div>
+        ${this.renderPong()}
+
+      </main>
       <p class="app-footer">
         🚽 Made with love by
         <a
@@ -86,5 +91,21 @@ export class AppShell extends LitElement {
         >.
       </p>
     `;
+  }
+
+  async ping(){
+    this.response = await fetch('/api/users')
+    this.responseBody = await this.response.text()
+  }
+  renderPong(){
+    return html`
+      ${this.response?html`
+        <div>status: ${this.response.status}</div>
+        <div>url: ${this.response.url}</div>
+      `:''}
+      ${this.responseBody?html`
+        <div>body: ${this.responseBody}</div>`:''
+      }
+    `
   }
 }
